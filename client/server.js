@@ -30,11 +30,7 @@ const getSearchTerms = (searchTerms) => {
 }
 
 const evaluate = (lefttOperand, operator, rightOperand) => {
-    return eval(
-      Number(lefttOperand) || lefttOperand.toString(), 
-      operator, 
-      Number(rightOperand) || rightOperand.toString()
-    );
+    return eval(`${Number(lefttOperand) || `'${lefttOperand}'`} ${operator} ${Number(rightOperand) || `'${rightOperand}'`}`);
     };
 
 const getResultInDynamicObject = (term, key, span) => {
@@ -51,16 +47,15 @@ const searchRecursivly = (term, span) => {
         const element = span[key];
         // special case where object is build like key and value 
         if(key === SPECIAL_CASE_KEY) {
-          return getResultInDynamicObject(term, key, span);
+          if(getResultInDynamicObject(term, key, span)) {
+            return true;
+          }
         }
         else if(Array.isArray(element)) {
            if(element.some(item => searchRecursivly(term, item))) { // at least one object matches the search term is engouh
             return true;
            }
         }
-        // else if(typeof element === 'object'){
-        //   return searchRecursivly(term, element);
-        // }
         else {
           //check if property name equals
           if(!(key === term.leftOperand)) continue;

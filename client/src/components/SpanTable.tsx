@@ -14,6 +14,10 @@ import FirstPageIcon from '@mui/icons-material/FirstPage';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import LastPageIcon from '@mui/icons-material/LastPage';
+import { Span } from '../models/Span';
+import { useState } from 'react';
+import { NoResults } from './NoResults';
+import TableHead from '@mui/material/TableHead';
 
 interface TablePaginationActionsProps {
   count: number;
@@ -25,7 +29,11 @@ interface TablePaginationActionsProps {
   ) => void;
 }
 
-function TablePaginationActions(props: TablePaginationActionsProps) {
+interface SpanTableProps {
+  data: Span[];
+}
+
+const TablePaginationActions = (props: TablePaginationActionsProps) => {
   const theme = useTheme();
   const { count, page, rowsPerPage, onPageChange } = props;
 
@@ -81,33 +89,28 @@ function TablePaginationActions(props: TablePaginationActionsProps) {
   );
 }
 
-function createData(name: string, calories: number, fat: number) {
-  return { name, calories, fat };
-}
+// const createData = (name: string, calories: number, fat: number) => ({ name, calories, fat });
 
-const rows = [
-  createData('Cupcake', 305, 3.7),
-  createData('Donut', 452, 25.0),
-  createData('Eclair', 262, 16.0),
-  createData('Frozen yoghurt', 159, 6.0),
-  createData('Gingerbread', 356, 16.0),
-  createData('Honeycomb', 408, 3.2),
-  createData('Ice cream sandwich', 237, 9.0),
-  createData('Jelly Bean', 375, 0.0),
-  createData('KitKat', 518, 26.0),
-  createData('Lollipop', 392, 0.2),
-  createData('Marshmallow', 318, 0),
-  createData('Nougat', 360, 19.0),
-  createData('Oreo', 437, 18.0),
-].sort((a, b) => (a.calories < b.calories ? -1 : 1));
+// const rows = [
+//   createData('Cupcake', 305, 3.7),
+//   createData('Donut', 452, 25.0),
+//   createData('Eclair', 262, 16.0),
+//   createData('Frozen yoghurt', 159, 6.0),
+//   createData('Gingerbread', 356, 16.0),
+//   createData('Honeycomb', 408, 3.2),
+//   createData('Ice cream sandwich', 237, 9.0),
+//   createData('Jelly Bean', 375, 0.0),
+//   createData('KitKat', 518, 26.0),
+//   createData('Lollipop', 392, 0.2),
+//   createData('Marshmallow', 318, 0),
+//   createData('Nougat', 360, 19.0),
+//   createData('Oreo', 437, 18.0),
+// ].sort((a, b) => (a.calories < b.calories ? -1 : 1));
 
-export const SpanTable = () => {
+export const SpanTable = ({ data }: SpanTableProps) => {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-
-  // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+  const [spans, setSpans] = useState<Span[]>(data);
 
   const handleChangePage = (
     event: React.MouseEvent<HTMLButtonElement> | null,
@@ -124,37 +127,47 @@ export const SpanTable = () => {
   };
 
   return (
-    <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 500 }} aria-label="custom pagination table">
+    <>
+    { spans.length === 0 
+    ? <NoResults /> 
+    : (<TableContainer component={Paper}>
+      <Table sx={{ minWidth: 500, maxWidth: 800 }} aria-label="custom pagination table">
+      <TableHead>
+          <TableRow>
+            <TableCell align="center">Span Id</TableCell>
+            <TableCell align="center">ParentSpanId</TableCell>
+            <TableCell align="center">OperationName</TableCell>
+            <TableCell align="center">StartTime</TableCell>
+            <TableCell align="center">Duration</TableCell>
+          </TableRow>
+        </TableHead>
         <TableBody>
-          {(rowsPerPage > 0
-            ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-            : rows
-          ).map((row) => (
-            <TableRow key={row.name}>
-              <TableCell component="th" scope="row">
-                {row.name}
+          {spans.map((row) => (
+            <TableRow key={row.spanId.toString()}>
+               <TableCell style={{ width: 200 }} align="center">
+                {row.spanId.toString()}
               </TableCell>
-              <TableCell style={{ width: 160 }} align="right">
-                {row.calories}
+              <TableCell style={{ width: 200 }} align="center">
+                {row.parentSpanId.toString()}
               </TableCell>
-              <TableCell style={{ width: 160 }} align="right">
-                {row.fat}
+              <TableCell style={{ width: 200 }} align="center">
+                {row.operationName}
+              </TableCell>
+              <TableCell style={{ width: 200 }} align="center">
+                {row.startTime.toString()}
+              </TableCell>
+              <TableCell style={{ width: 200 }} align="center">
+                {row.duration}
               </TableCell>
             </TableRow>
           ))}
-          {emptyRows > 0 && (
-            <TableRow style={{ height: 53 * emptyRows }}>
-              <TableCell colSpan={6} />
-            </TableRow>
-          )}
         </TableBody>
         <TableFooter>
           <TableRow>
             <TablePagination
               rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
               colSpan={3}
-              count={rows.length}
+              count={spans.length}
               rowsPerPage={rowsPerPage}
               page={page}
               SelectProps={{
@@ -170,6 +183,8 @@ export const SpanTable = () => {
           </TableRow>
         </TableFooter>
       </Table>
-    </TableContainer>
+    </TableContainer>)
+  }
+  </>
   );
 }

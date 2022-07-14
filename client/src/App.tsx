@@ -1,43 +1,15 @@
 import React from 'react';
 import { Link, Route, Routes } from 'react-router-dom';
-import { SpanTable } from './components/SpanTable';
+import { Home } from './pages/Home';
+import { MemoSpanDetails } from './pages/SpanDetails';
 
-// App.js
-function Home() {
-  return (
-    <>
-      <SpanTable />
-      <nav>
-        <Link to="/about">About</Link>
-      </nav>
-    </>
-  );
-}
-
-function About() {
-  return (
-    <>
-      <main>
-        <h2>Who are we?</h2>
-        <p>
-          That feels like an existential question, don't you
-          think?
-        </p>
-      </main>
-      <nav>
-        <Link to="/">Home</Link>
-      </nav>
-    </>
-  );
-}
-
-function App() {
+const App = () => {
   return (
     <div className="App">
-           <h1>Welcome to React Router!</h1>
+           <h1>Span Dashboard</h1>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="about" element={<About />} />
+        <Route path="/span:id" element={<MemoSpanDetails />} />
       </Routes>
     </div>
   );

@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const router = express.Router();
 const app = express();
-const data = require('./spans[1].json');
+const readJson = require('../server/utils');
 const port = 9000;
 
 app.use(bodyParser.json());
@@ -12,6 +12,9 @@ app.use('/api', router);
 
 var operators = ['===', '!==','!=','<=',  '>=', '<', '>','=='];
 const SPECIAL_CASE_KEY = 'key';
+const PATH_TO_JSON = './spans[1].json';
+
+
 
 const getSearchTerms = (searchTerms) => {
   return searchTerms.map(term => {
@@ -78,13 +81,26 @@ const searchSpan = (searchTermsArray, data) => {
 }
 
 router.get('/spans', (req, res) => {
-  console.log(data);
+  const data = readJson(PATH_TO_JSON);
+  console.log(data[0]);
   res.json(data);
+})
+
+router.get('/spans/:id', (req, res) => {
+  const id = req.params.id;
+  if(!id) {
+    res.status(404).send('invalid id');
+  }
+
+  const data = readJson(PATH_TO_JSON);
+  const [first] = data.filter(x => x.spanId === id);
+  res.json(first);
 })
 
 router.get('/spans/search', (req, res) => {
   const query = req.query.match;
   if(!query) {
+    const data = readJson(PATH_TO_JSON);
     res.json(data);
     return;
   }

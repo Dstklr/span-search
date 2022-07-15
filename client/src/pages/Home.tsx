@@ -6,7 +6,6 @@ import { Span } from "../models/Span";
 import { Container, Divider } from "@mui/material";
 
 export const Home = () => {
-  const [searchTerm, setSearchTerm] = useState();
   const [data, setData] = useState<Span[]>()
 
   useEffect(() => {
@@ -16,11 +15,16 @@ export const Home = () => {
     fetchTrace();
   }, []);
 
+  const onSubmitHandler = async (query: string) => {
+    setData(await fetchSpans(query));
+  }
+
   return (<>
     {data && data.length > 0 &&
       (
         <Container maxWidth="xl">
-          <SearchBox />
+          <h1>Span Dashboard</h1>
+          <SearchBox onSubmitHandler={async () => { await onSubmitHandler}} />
           <Divider variant="middle" />
           <SpanTable data={data} />
         </Container>

@@ -1,9 +1,9 @@
 export interface Span {
-    spanId: BigInt;
-    parentSpanId: BigInt;
+    spanId: string;
+    parentSpanId: string;
     operationName: string;
     references: any;
-    startTime: BigInt;
+    startTime: Date;
     duration: number;
     tags: string;
     logs: string;

@@ -19,7 +19,7 @@ import { useState } from 'react';
 import { NoResults } from './NoResults';
 import TableHead from '@mui/material/TableHead';
 import { styled } from '@mui/material/styles';
-import { Container } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -58,7 +58,9 @@ interface SpanTableProps {
 
 const TablePaginationActions = (props: TablePaginationActionsProps) => {
   const theme = useTheme();
+
   const { count, page, rowsPerPage, onPageChange } = props;
+
 
   const handleFirstPageButtonClick = (
     event: React.MouseEvent<HTMLButtonElement>,
@@ -112,12 +114,14 @@ const TablePaginationActions = (props: TablePaginationActionsProps) => {
   );
 }
 
-
-
 export const SpanTable = ({ data }: SpanTableProps) => {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [spans, setSpans] = useState<Span[]>(data);
+
+  const navigate = useNavigate();
+
+  const onRowClickHandler = (id: string) => navigate(`/span/${id}`);
 
   const handleChangePage = (
     event: React.MouseEvent<HTMLButtonElement> | null,
@@ -138,7 +142,7 @@ export const SpanTable = ({ data }: SpanTableProps) => {
       {spans.length === 0
         ? <NoResults />
         : (<TableContainer component={Paper}>
-          <Table sx={{ minWidth: 500, maxWidth: 1200 }} aria-label="custom pagination table">
+          <Table sx={{ minWidth: 500 }} aria-label="custom pagination table">
             <TableHead>
               <StyledTableRow>
                 <StyledTableCell align="center">Span Id</StyledTableCell>
@@ -151,19 +155,19 @@ export const SpanTable = ({ data }: SpanTableProps) => {
             <TableBody>
               {spans.map((row) => (
                 <StyledTableRow onClick={() => onRowClickHandler(row.spanId)} hover key={row.spanId.toString()}>
-                  <StyledTableCell style={{ width: 200 }} align="center">
-                    {row.spanId.toString()}
+                  <StyledTableCell align="center">
+                    {row.spanId}
                   </StyledTableCell>
-                  <StyledTableCell style={{ width: 200 }} align="center">
-                    {row.parentSpanId.toString()}
+                  <StyledTableCell align="center">
+                    {row.parentSpanId}
                   </StyledTableCell>
-                  <StyledTableCell style={{ width: 200 }} align="center">
+                  <StyledTableCell align="center">
                     {row.operationName}
                   </StyledTableCell>
-                  <StyledTableCell style={{ width: 200 }} align="center">
+                  <StyledTableCell align="center">
                     {row.startTime.toString()}
                   </StyledTableCell>
-                  <StyledTableCell style={{ width: 200 }} align="center">
+                  <StyledTableCell align="center">
                     {row.duration}
                   </StyledTableCell>
                 </StyledTableRow>

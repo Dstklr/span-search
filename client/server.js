@@ -3,10 +3,11 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const router = express.Router();
 const app = express();
+const validateQuery = require('../server/middlewares/validateSearchQuery');
 const {
   getSpanById,
   getSpansBySearchTerms,
-  getAllSpans } = require('../server/services/spanSearchServicece');
+  getAllSpans } = require('../server/services/spanSearchService');
 const port = 9000;
 
 app.use(bodyParser.json());
@@ -19,6 +20,20 @@ router.get('/spans', async (req, res) => {
   } catch (error) {
     console.log('failed fetching all spans', error);
     res.json([]);
+  }
+})
+
+
+router.get('/spans/search/:term', validateQuery, async (req, res) => {
+  const query = req.searchTerms;
+  try {
+    const result = await getSpansBySearchTerms(query);
+    console.log("🚀 ~ file: server.js ~ line 31 ~ router.get ~ result", result);
+    res.json(result);
+
+  } catch (error) {
+    console.error('error searching spans', error);
+    res.status(500).send('Something broke!')
   }
 })
 
@@ -37,16 +52,6 @@ router.get('/spans/:id', async (req, res) => {
 
 })
 
-router.get('/spans/search', async (req, res) => {
-  const query = req.query.match;
-  try {
-    res.json(await getSpansBySearchTerms(query));
-
-  } catch (error) {
-    console.error('error searching spans', error);
-    res.status(500).send('Something broke!')
-  }
-})
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)

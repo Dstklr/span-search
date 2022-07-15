@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const FETCH_SPAN_BY_ID_URL = 'http://localhost:9000/api/spans/'
-const FETCH_SPANS_BY_SEARCH_TERMS_URL = 'http://localhost:9000/api/spans/search?'
+const FETCH_SPANS_BY_SEARCH_TERMS_URL = 'http://localhost:9000/api/spans/search/'
 const FETCH_ALL_SPANS = 'http://localhost:9000/api/spans';
 
 const fetchSpan = async (id: string) => {

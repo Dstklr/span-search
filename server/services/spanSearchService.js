@@ -1,4 +1,4 @@
-const readJson = require('./utils');
+const readJson = require('../utils');
 const operators = ['===', '!==', '!=', '<=', '>=', '<', '>', '=='];
 const SPECIAL_CASE_KEY = 'key';
 const PATH_TO_JSON = './assets/spans.json';
@@ -43,16 +43,15 @@ const searchRecursivly = (term, span) => {
     }
 }
 
-
 const getSearchTerms = (searchTerms) => {
     return searchTerms.map(term => {
         const index = operators.findIndex(x => term.includes(x));
         if (index > -1) {
             const [leftOperand, rightOperand] = term.split(operators[index]);
             return {
-                leftOperand,
+                leftOperand: leftOperand.replace(/["]/g, ''),
                 operator: operators[index],
-                rightOperand
+                rightOperand: rightOperand.replace(/["]/g, ''),
             }
         }
         return {};
@@ -68,28 +67,25 @@ const searchSpan = (searchTermsArray, data) => {
     return spansFound;
 }
 
-const getSpansBySearchTerms = (query) => {
+const getSpansBySearchTerms = async (query) => {
     const data = await readJson(PATH_TO_JSON);
 
     if (!query) {
-        res.json(data);
-        return;
+        return data;
     }
-    // search terms ready without spaces
-    const searchTerms = query.toLowerCase().replace(/\s/g, '').replace(/['"]+/g, '').split('and');
 
     try {
-        const searchTermsArray = getSearchTerms(searchTerms);
-        const results = searchSpan(searchTermsArray, data);
-        res.json(results);
+        const searchTermsArray = getSearchTerms(query);
+        console.log("🚀 ~ file: spanSearchService.js ~ line 79 ~ getSpansBySearchTerms ~ searchTermsArray", searchTermsArray)
+        return searchSpan(searchTermsArray, data);
 
     } catch (error) {
         console.error(error.stack);
-        res.status(500).send('Something broke!')
+        return [];
     }
 }
 
-const getSpanById = (id) => {
+const getSpanById = async (id) => {
     const data = await readJson(PATH_TO_JSON);
     const [first] = data.filter(x => x.spanId.toString() === id);
 
@@ -101,10 +97,10 @@ const getSpanById = (id) => {
     }
 }
 
-const getAllSpans = () => {
+const getAllSpans = async () => {
     const parsedSpans = await readJson(PATH_TO_JSON);
     if (!parsedSpans || parsedSpans.lenght === 0) {
-        return res.end([]);
+        return [];
     }
     return parsedSpans.map((span => {
         return {
@@ -117,7 +113,7 @@ const getAllSpans = () => {
     }));
 }
 
-module.export = {
+module.exports = {
     getSpanById,
     getSpansBySearchTerms,
     getAllSpans

@@ -3,7 +3,7 @@ import { useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
+import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableFooter from '@mui/material/TableFooter';
 import TablePagination from '@mui/material/TablePagination';
@@ -18,6 +18,29 @@ import { Span } from '../models/Span';
 import { useState } from 'react';
 import { NoResults } from './NoResults';
 import TableHead from '@mui/material/TableHead';
+import { styled } from '@mui/material/styles';
+import { Container } from '@mui/material';
+
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  [`&.${tableCellClasses.head}`]: {
+    backgroundColor: theme.palette.common.black,
+    color: theme.palette.common.white,
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 14,
+  },
+}));
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  '&:nth-of-type(odd)': {
+    backgroundColor: theme.palette.action.hover,
+  },
+  // hide last border
+  '&:last-child td, &:last-child th': {
+    border: 0,
+  },
+}));
+
 
 interface TablePaginationActionsProps {
   count: number;
@@ -89,23 +112,7 @@ const TablePaginationActions = (props: TablePaginationActionsProps) => {
   );
 }
 
-// const createData = (name: string, calories: number, fat: number) => ({ name, calories, fat });
 
-// const rows = [
-//   createData('Cupcake', 305, 3.7),
-//   createData('Donut', 452, 25.0),
-//   createData('Eclair', 262, 16.0),
-//   createData('Frozen yoghurt', 159, 6.0),
-//   createData('Gingerbread', 356, 16.0),
-//   createData('Honeycomb', 408, 3.2),
-//   createData('Ice cream sandwich', 237, 9.0),
-//   createData('Jelly Bean', 375, 0.0),
-//   createData('KitKat', 518, 26.0),
-//   createData('Lollipop', 392, 0.2),
-//   createData('Marshmallow', 318, 0),
-//   createData('Nougat', 360, 19.0),
-//   createData('Oreo', 437, 18.0),
-// ].sort((a, b) => (a.calories < b.calories ? -1 : 1));
 
 export const SpanTable = ({ data }: SpanTableProps) => {
   const [page, setPage] = React.useState(0);
@@ -128,63 +135,63 @@ export const SpanTable = ({ data }: SpanTableProps) => {
 
   return (
     <>
-    { spans.length === 0 
-    ? <NoResults /> 
-    : (<TableContainer component={Paper}>
-      <Table sx={{ minWidth: 500, maxWidth: 800 }} aria-label="custom pagination table">
-      <TableHead>
-          <TableRow>
-            <TableCell align="center">Span Id</TableCell>
-            <TableCell align="center">ParentSpanId</TableCell>
-            <TableCell align="center">OperationName</TableCell>
-            <TableCell align="center">StartTime</TableCell>
-            <TableCell align="center">Duration</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {spans.map((row) => (
-            <TableRow key={row.spanId.toString()}>
-               <TableCell style={{ width: 200 }} align="center">
-                {row.spanId.toString()}
-              </TableCell>
-              <TableCell style={{ width: 200 }} align="center">
-                {row.parentSpanId.toString()}
-              </TableCell>
-              <TableCell style={{ width: 200 }} align="center">
-                {row.operationName}
-              </TableCell>
-              <TableCell style={{ width: 200 }} align="center">
-                {row.startTime.toString()}
-              </TableCell>
-              <TableCell style={{ width: 200 }} align="center">
-                {row.duration}
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-        <TableFooter>
-          <TableRow>
-            <TablePagination
-              rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
-              colSpan={3}
-              count={spans.length}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              SelectProps={{
-                inputProps: {
-                  'aria-label': 'rows per page',
-                },
-                native: true,
-              }}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-              ActionsComponent={TablePaginationActions}
-            />
-          </TableRow>
-        </TableFooter>
-      </Table>
-    </TableContainer>)
-  }
-  </>
+      {spans.length === 0
+        ? <NoResults />
+        : (<TableContainer component={Paper}>
+          <Table sx={{ minWidth: 500, maxWidth: 1200 }} aria-label="custom pagination table">
+            <TableHead>
+              <StyledTableRow>
+                <StyledTableCell align="center">Span Id</StyledTableCell>
+                <StyledTableCell align="center">Parent Span Id</StyledTableCell>
+                <StyledTableCell align="center">Operation Name</StyledTableCell>
+                <StyledTableCell align="center">Start Time</StyledTableCell>
+                <StyledTableCell align="center">Duration</StyledTableCell>
+              </StyledTableRow>
+            </TableHead>
+            <TableBody>
+              {spans.map((row) => (
+                <StyledTableRow onClick={() => onRowClickHandler(row.spanId)} hover key={row.spanId.toString()}>
+                  <StyledTableCell style={{ width: 200 }} align="center">
+                    {row.spanId.toString()}
+                  </StyledTableCell>
+                  <StyledTableCell style={{ width: 200 }} align="center">
+                    {row.parentSpanId.toString()}
+                  </StyledTableCell>
+                  <StyledTableCell style={{ width: 200 }} align="center">
+                    {row.operationName}
+                  </StyledTableCell>
+                  <StyledTableCell style={{ width: 200 }} align="center">
+                    {row.startTime.toString()}
+                  </StyledTableCell>
+                  <StyledTableCell style={{ width: 200 }} align="center">
+                    {row.duration}
+                  </StyledTableCell>
+                </StyledTableRow>
+              ))}
+            </TableBody>
+            <TableFooter>
+              <StyledTableRow>
+                <TablePagination
+                  rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
+                  colSpan={3}
+                  count={spans.length}
+                  rowsPerPage={rowsPerPage}
+                  page={page}
+                  SelectProps={{
+                    inputProps: {
+                      'aria-label': 'rows per page',
+                    },
+                    native: true,
+                  }}
+                  onPageChange={handleChangePage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
+                  ActionsComponent={TablePaginationActions}
+                />
+              </StyledTableRow>
+            </TableFooter>
+          </Table>
+        </TableContainer>)
+      }
+    </>
   );
 }

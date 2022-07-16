@@ -1,4 +1,6 @@
-const readJson = require('../utils');
+const { readJson, getJsonString } = require('../utils');
+const mapSpan = require('./spanMapperService');
+
 const operators = ['===', '!==', '!=', '<=', '>=', '<', '>', '=='];
 const SPECIAL_CASE_KEY = 'key';
 const PATH_TO_JSON = './assets/spans.json';
@@ -10,7 +12,13 @@ const evaluate = (lefttOperand, operator, rightOperand) => {
 
 const getResultInDynamicObject = (term, key, span) => {
     const valueToSearchOn = Object.values(span).pop(); // get last value in the dynamic object
-    if (span[key] === term.leftOperand) { // compare key name to the search term key
+
+    const parsedJsonString = getJsonString(valueToSearchOn);
+
+    if (typeof parsedJsonString === 'object' && searchRecursivly(term, parsedJsonString)) {
+        return true;
+    }
+    else if (span[key].toLowerCase() === term.leftOperand) { // compare key name to the search term key
         return evaluate(valueToSearchOn, term.operator, term.rightOperand);
     }
     return false;
@@ -28,13 +36,13 @@ const searchRecursivly = (term, span) => {
                 return true;
             }
         }
-        else if (Array.isArray(element)) { // check if value is array
+        else if (Array.isArray(element)) {
             if (element.some(item => searchRecursivly(term, item))) { // at least one object matches the search term is engouh
                 return true;
             }
         }
         else { // value is primitive type
-            if (!(key === term.leftOperand)) continue;
+            if (!(key.toLowerCase() === term.leftOperand)) continue;
 
             if (evaluate(element, term.operator, term.rightOperand)) {
                 return true;
@@ -54,7 +62,7 @@ const getSearchTerms = (searchTerms) => {
                 rightOperand: rightOperand.replace(/["]/g, ''),
             }
         }
-        return {};
+        return null;
     });
 }
 
@@ -76,6 +84,9 @@ const getSpansBySearchTerms = async (query) => {
 
     try {
         const searchTermsArray = getSearchTerms(query);
+        if (!searchTermsArray) {
+            return [];
+        }
         console.log("🚀 ~ file: spanSearchService.js ~ line 79 ~ getSpansBySearchTerms ~ searchTermsArray", searchTermsArray)
         return searchSpan(searchTermsArray, data);
 
@@ -90,7 +101,7 @@ const getSpanById = async (id) => {
     const [first] = data.filter(x => x.spanId.toString() === id);
 
     return {
-        ...first,
+        ...mapSpan(first),
         logs: JSON.stringify(first.logs),
         tags: JSON.stringify(first.tags),
         refrences: JSON.stringify(first.refrences)
@@ -102,15 +113,7 @@ const getAllSpans = async () => {
     if (!parsedSpans || parsedSpans.lenght === 0) {
         return [];
     }
-    return parsedSpans.map((span => {
-        return {
-            spanId: span.spanId.toString(),
-            parentSpanId: span.parentSpanId.toString(),
-            operationName: span.operationName,
-            startTime: (new Date(span.startTime / 1000)),
-            duration: span.duration,
-        }
-    }));
+    return parsedSpans.map(mapSpan);
 }
 
 module.exports = {

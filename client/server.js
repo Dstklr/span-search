@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const router = express.Router();
 const app = express();
-const validateQuery = require('../server/middlewares/validateSearchQuery');
+const processSearchQuery = require('../server/middlewares/processSearchQuery');
 const {
   getSpanById,
   getSpansBySearchTerms,
@@ -23,8 +23,7 @@ router.get('/spans', async (req, res) => {
   }
 })
 
-
-router.get('/spans/search/:term', validateQuery, async (req, res) => {
+router.get('/spans/search/:term', processSearchQuery, async (req, res) => {
   const query = req.searchTerms;
   try {
     const result = await getSpansBySearchTerms(query);
@@ -51,7 +50,6 @@ router.get('/spans/:id', async (req, res) => {
   }
 
 })
-
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)

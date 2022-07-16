@@ -1,10 +1,16 @@
 var fs = require('fs');
-const { resolve } = require('path');
 var JSONbig = require('./../client/node_modules/json-bigint');
 
 
+const getJsonString = (stringToCheck) => {
+    try {
+        return JSON.parse(stringToCheck);
+    } catch (e) {
+        return stringToCheck;
+    }
+}
+
 async function getJson(readable) {
-    // readable.setEncoding('utf8');
     let data = '';
     for await (const chunk of readable) {
         data += chunk;
@@ -13,62 +19,16 @@ async function getJson(readable) {
 }
 
 const readJson = async (path) => {
-    let spansJson = '';
     try {
-
-        const readableStream = fs.createReadStream(path, 'utf-8');
-
-        const response = await getJson(readableStream);
-
-        try {
-            const parsed = JSONbig.parse(response)
-            return parsed;
-
-        } catch (error) {
-            console.log('failed parsing', error);
-            return [];
+        const response = await getJson(fs.createReadStream(path, 'utf-8'));
+        if (!response) {
+            return '';
         }
-
-        // readableStream.on('data', (chunk) => {
-        //     spansJson += chunk;
-        // });
-
-        // readableStream.on('end', () => {
-        //     console.log('All Done');
-        //     try {
-        //         const parsed = JSONbig.parse(spansJson)
-        //         resolve(parsed);
-
-        //     } catch (error) {
-        //         console.log('failed parsing', error);
-        //         return [];
-        //     }
-        // });
-
-        // readableStream.pipe()
-
-        // readableStream.on('error', function (error) {
-        //     console.log(`error: ${error.message}`);
-        // })
-
-        // readableStream.on('data', (chunk) => {
-        //     console.log(chunk);
-        // })
-
-        // const response = await fs.read(path, 'utf8', function (err, data) {
-        //     if (err) {
-        //         console.log('failed reading json file', err);
-        //         throw err
-        //     };
-        //     return JSONbig.parse(data);
-        // });
-
-
+        return JSONbig.parse(response)
     } catch (error) {
         console.log('error occured parsing/reading json file', err);
         return [];
     }
-
 }
 
-module.exports = readJson;
+module.exports = { readJson, getJsonString };

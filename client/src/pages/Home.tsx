@@ -7,7 +7,7 @@ import { Container, Divider } from "@mui/material";
 import { NoResults } from '../components/NoResults';
 
 export const Home = () => {
-  const [data, setData] = useState<Span[]>()
+  const [data, setData] = useState<Span[]>([])
 
   useEffect(() => {
     const fetchTrace = async () => {
@@ -21,13 +21,11 @@ export const Home = () => {
   }
 
   return (
-    (
-      <Container maxWidth="xl">
-        <h1>Span Dashboard</h1>
-        <SearchBox onSubmitHandler={onSubmitHandler} />
-        <Divider variant="middle" />
-        {data && data.length > 0 ? <SpanTable data={data} /> : <NoResults />}
-      </Container>
-    )
+    <Container maxWidth="xl">
+      <h1>Span Dashboard</h1>
+      <SearchBox onSubmitHandler={onSubmitHandler} />
+      <Divider variant="middle" />
+      {data.length > 0 ? <SpanTable data={data} /> : <NoResults />}
+    </Container>
   );
 }

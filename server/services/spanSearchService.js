@@ -84,7 +84,7 @@ const getSpansBySearchTerms = async (query) => {
 
     try {
         const searchTermsArray = getSearchTerms(query);
-        if (!searchTermsArray) {
+        if (!searchTermsArray || !searchTermsArray[0]) {
             return [];
         }
         return searchSpan(searchTermsArray, data);

@@ -3,7 +3,18 @@ Spans search dashboard, allowing free text search.
 
 ## Technologies Used
 - Client side: React + Typescript + Material UI + Styled Components
-- Server side: Nodejs server using NestJS framework.
+- Server side: Nodejs + express server.
+
+###
+Packages used:
+
+[node-cache](https://www.npmjs.com/package/node-cache) - for cache on server side
+
+[json-bigint](https://www.npmjs.com/package/json-bigint) - parsing large numbers from json file
+
+## Pages
+* Home page ("/")
+* Span Viewer ("/span/:id")
 
 
 ## Features
@@ -47,5 +58,9 @@ to run the project, run npm install on both "client" and "server".
 ./server > npm i
 
 ./client > npm start
-./server > npm start
+./server > node server.js
 ```
+
+## TODO
+* add testing server + client
+* add paging to dashboard

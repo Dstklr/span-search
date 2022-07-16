@@ -87,7 +87,6 @@ const getSpansBySearchTerms = async (query) => {
         if (!searchTermsArray) {
             return [];
         }
-        console.log("🚀 ~ file: spanSearchService.js ~ line 79 ~ getSpansBySearchTerms ~ searchTermsArray", searchTermsArray)
         return searchSpan(searchTermsArray, data);
 
     } catch (error) {

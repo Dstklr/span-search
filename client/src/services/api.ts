@@ -1,12 +1,11 @@
 import axios from "axios";
 
-const FETCH_SPAN_BY_ID_URL = 'http://localhost:9000/api/spans/'
-const FETCH_SPANS_BY_SEARCH_TERMS_URL = 'http://localhost:9000/api/spans/search/'
-const FETCH_ALL_SPANS = 'http://localhost:9000/api/spans';
+const FETCH_SPANS_BY_SEARCH_TERMS_URL = '/api/spans/search/';
+const FETCH_SPANS = '/api/spans/';
 
 const fetchSpan = async (id: string) => {
     try {
-        const { data } = await axios.get(`${FETCH_SPAN_BY_ID_URL}${id}`);
+        const { data } = await axios.get(`${FETCH_SPANS}${id}`);
         //check if response is error/notfound
         return data;
     } catch (error) {
@@ -19,7 +18,7 @@ const fetchSpans = async (query?: string) => {
     try {
         const url = query
             ? `${FETCH_SPANS_BY_SEARCH_TERMS_URL}${query}`
-            : `${FETCH_ALL_SPANS}`;
+            : `${FETCH_SPANS}`;
 
         const { data } = await axios.get(url);
         //check if response is error/notfound

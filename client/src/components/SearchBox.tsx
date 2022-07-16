@@ -20,7 +20,7 @@ export const SearchBox = ({ onSubmitHandler }: SearchBoxProps) => {
     return (
         <Box display="flex" justifyItems="center" justifyContent="center" flexDirection="row">
             <Box marginRight="10px" width="100%">
-                <TextField size="medium" fullWidth value={searchTerm} onChange={onChangeHandler} id="outlined-search" label="Search field" onSubmit={() => console.log('subbmited')} type="search" />
+                <TextField size="medium" fullWidth value={searchTerm} onChange={onChangeHandler} id="outlined-search" label="Search field" type="search" />
             </Box>
             <Button onClick={onSearchClick} variant="contained">Search</Button>
         </Box>

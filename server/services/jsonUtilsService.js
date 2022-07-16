@@ -1,5 +1,5 @@
 var fs = require('fs');
-var JSONbig = require('./../client/node_modules/json-bigint');
+var JSONbig = require('json-bigint');
 
 
 const getJsonString = (stringToCheck) => {

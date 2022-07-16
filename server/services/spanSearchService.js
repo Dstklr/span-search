@@ -1,4 +1,4 @@
-const { readJson, getJsonString } = require('../utils');
+const { readJson, getJsonString } = require('./jsonUtilsService');
 const mapSpan = require('./spanMapperService');
 
 const operators = ['===', '!==', '!=', '<=', '>=', '<', '>', '=='];
